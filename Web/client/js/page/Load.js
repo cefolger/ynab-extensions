@@ -14,7 +14,8 @@ yext.page.Load = (function() {
 	
 	var splitBudgetFile = function(data) {
 		lines = data.split('\n'); 
-		transactionsByCategory = yext.transforms.YnabTransform.transactionsByCategory(lines); 
+		transactionsByCategory = yext.transforms.YnabTransform.transactionsByCategory(lines);
+		yext.transforms.YnabTransform.transactionsByLocation(lines); 
 		storedIncomes =  yext.transforms.YnabTransform.monthlyIncomes(lines); 
 		storedData = yext.transforms.YnabTransform.budgetsWithIncomesAndExpenses(storedIncomes, storedData );
 		storedData = yext.transforms.YnabTransform.categoriesWithCategoryBalances(storedData);
