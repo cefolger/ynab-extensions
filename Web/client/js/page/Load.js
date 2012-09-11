@@ -53,6 +53,8 @@ yext.page.Load = (function() {
 			$('#runningbalance').empty(); 
 			$('#graph').empty(); 
 			
+			console.log(yext.page.Load.getData()); 
+			
 			var data = yext.transforms.GraphTransform.spendingAsPercentageOfIncomeMasterCategories(yext.page.Load.getData()[monthString].masterCategories,yext.page.Load.getData()[monthString].income	);
 			var budgetUsage = new yext.graph.BudgetUsageGraph( $('#budget-usage')).plot( yext.transforms.GraphTransform.currentBudgetUsage(yext.page.Load.getData()[monthString]) ); 
 			
@@ -87,11 +89,16 @@ $(document).ready(function() {
 			   
 			   var $select = $('select[name=month]'); 
 			   $.each(yext.page.Load.getData(), function(key, value) {
-				   $select.append($('<option></option>', { value: key}).text(key)); 
+				   $select.append($('<option></option>', { value: key}).text(key));
 			   }); 
 			   
 			   $select.change(function() {
+				   if($(this).val() === 'default') {
+					   return; 
+				   }
+				   
 				   yext.page.Load.selectMonth($(this).val()); 
+				   $('#tabs').tabs(); 
 			   }); 
 		}); 
 	}); 

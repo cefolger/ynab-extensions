@@ -7,3 +7,7 @@
     font-weight: normal;
     line-height: 18px;
 }
+
+.ui-widget {
+	font-family: helvetica, arial, sans-serif !important;
+}

@@ -17,6 +17,7 @@
 		<script type="text/javascript" src="../js/common/base.js"></script>
 		<script type="text/javascript" src="../js/transforms/YnabTransform.js"></script>
 		<script type="text/javascript" src="../js/transforms/GraphTransform.js"></script>
+		<script type="text/javascript" src="../js/transforms/StatTransform.js"></script>
 		<script type="text/javascript" src="../js/graph/BudgetUsageGraph.js"></script>
 		<script type="text/javascript" src="../js/graph/PieChart.js"></script>
 		<script type="text/javascript" src="../js/graph/LineChart.js"></script>
@@ -33,21 +34,37 @@
 			
 			<section>
 				<select name="month">
-					
+					<option value="default">-- Select a Month</option>
 				</select>
 			</section>
 			
-			<div id="budget-usage"></div>
-			
-			<div id="graph" style="width: 800px; height:500px;"></div>
-			
-			<div id="allocations" style="width: 800px; height:500px;"></div>
-			
-			<div id="spendingtrends" style="width: 800px; height:500px;"></div>
-			
-			<div id="categorybalancetrends" style="width: 800px; height:500px;"></div>
-			
-			<div id="runningbalance" style="width: 800px; height:500px;"></div>
+			<div id="tabs">
+				<ul>
+					<li><a href="#graphs">Graphs</a></li>
+					<li><a href="#stats">Statistics</a></li>
+				</ul>
+				<div id="graphs">
+					<div id="budget-usage"></div>
+					<div id="graph" style="width: 800px; height:500px;"></div>
+					<div id="allocations" style="width: 800px; height:500px;"></div>
+					<div id="spendingtrends" style="width: 800px; height:500px;"></div>
+					<div id="categorybalancetrends" style="width: 800px; height:500px;"></div>
+					<div id="runningbalance" style="width: 800px; height:500px;"></div>
+				</div>
+				<div id="stats">
+					<table>
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Value</th>
+							</tr>
+						</thead>
+						<tbody>
+						
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</section>
 		
 		<div id="tooltip" class="pie-chart-tooltip" style="display:none; position:absolute;background-color:#ff8888">Test</div>
