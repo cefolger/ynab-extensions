@@ -34,6 +34,31 @@ yext.transforms.YnabTransform = (function() {
 			return results; 
 		},
 		
+		transactionsByCategory: function( linePerTransactionArray) {
+			var results = {}; 
+			
+			$.each(linePerTransactionArray, function(index, line) {
+				line = line.replace(/"/g, ''); 
+				
+				if(index === 0) return; // ignore column header 
+				// get date
+				var date = line.split(',')[3];
+				if(date === "" || !date) return; 
+				
+				var actualDate = new Date(date);
+				var dateEntry = months[actualDate.getMonth()] + ' ' + actualDate.getFullYear(); 
+
+				var category = line.split(',')[6]; 
+
+				var entry = results[category] || { transactions:[] };
+				results[category] = entry; 
+				results[category].transactions.push(line); 
+			});  
+			
+			console.log(results); 
+			return results; 
+		},
+		
 		/*
 		 * input: monthlyIncomes: object containing months and incomes
 		 * input: monthlyBudgets: object containing budgets by month

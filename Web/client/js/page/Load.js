@@ -1,5 +1,6 @@
 yext.page.Load = (function() {
 	var storedData = {}; 
+	var transactionsByCategory; 
 	
 	var splitFile = function(data) {
 		// split file into array of lines
@@ -13,9 +14,21 @@ yext.page.Load = (function() {
 	
 	var splitBudgetFile = function(data) {
 		lines = data.split('\n'); 
-		 storedIncomes =  yext.transforms.YnabTransform.monthlyIncomes(lines); 
-		 storedData = yext.transforms.YnabTransform.budgetsWithIncomesAndExpenses(storedIncomes, storedData );
-		 storedData = yext.transforms.YnabTransform.categoriesWithCategoryBalances(storedData);
+		transactionsByCategory = yext.transforms.YnabTransform.transactionsByCategory(lines); 
+		storedIncomes =  yext.transforms.YnabTransform.monthlyIncomes(lines); 
+		storedData = yext.transforms.YnabTransform.budgetsWithIncomesAndExpenses(storedIncomes, storedData );
+		storedData = yext.transforms.YnabTransform.categoriesWithCategoryBalances(storedData);
+	}; 
+	
+	var generateStatTable = function($statRoot, $statUl, data, id) {
+		var $tpcStats = $('<div></div>').appendTo($statRoot);
+		$tpcStats.attr('id', id); 
+		$('<li><a href="#tpc">Transactions per category</a></li>').appendTo($statUl);
+		var $tpcTable = $('<table><thead><tr><th>Name</th><th>Count</th></tr></thead><tbody></tbody>').appendTo($tpcStats);  
+		$.each(data, function(key, value) {
+			var $tr = $('<tr></tr>').appendTo($tpcTable);
+			$tr.append( $('<td>' + value.name + '</td><td>' + value.value + '</td>')); 
+		}); 
 	}; 
 	
 	return {
@@ -53,8 +66,6 @@ yext.page.Load = (function() {
 			$('#runningbalance').empty(); 
 			$('#graph').empty(); 
 			
-			console.log(yext.page.Load.getData()); 
-			
 			var data = yext.transforms.GraphTransform.spendingAsPercentageOfIncomeMasterCategories(yext.page.Load.getData()[monthString].masterCategories,yext.page.Load.getData()[monthString].income	);
 			var budgetUsage = new yext.graph.BudgetUsageGraph( $('#budget-usage')).plot( yext.transforms.GraphTransform.currentBudgetUsage(yext.page.Load.getData()[monthString]) ); 
 			
@@ -69,6 +80,14 @@ yext.page.Load = (function() {
 			new yext.graph.LineChart('runningbalance').plot(totalSpendingData.data, totalSpendingData.labels, 'Cumulative spending each month for top 5 master categories');
 			
 			new yext.graph.PieChart('graph').plot(data, 'Outflows as a percentage of total income'); 
+			
+			$('#stats').find('div').remove();
+			var $statRoot = $('<div></div>').appendTo($('#stats')); 
+			var $statUl =  $('<ul></ul>').appendTo($statRoot); 
+			
+			generateStatTable($statRoot, $statUl,yext.transforms.StatTransform.transactionsPerCategory(transactionsByCategory), 'tpcStats' ); 
+			
+			$statRoot.tabs(); 
 		}
 	}
 })(); 
