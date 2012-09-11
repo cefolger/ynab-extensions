@@ -44,17 +44,19 @@ yext.page.Load = (function() {
 		getData: function() {
 			return storedData; 
 		},
-	}
-})(); 
-
-$(document).ready(function() {
-	$('#load').click(function() {
-		yext.page.Load.loadBudgetFile( $('#import')[0], function() {
-			yext.page.Load.loadRegisterFile( $('#import-register')[0], function() {
-			var data = yext.transforms.GraphTransform.spendingAsPercentageOfIncomeMasterCategories(yext.page.Load.getData()['September 2012'].masterCategories,yext.page.Load.getData()['September 2012'].income	);
-			var budgetUsage = new yext.graph.BudgetUsageGraph( $('#budget-usage')).plot( yext.transforms.GraphTransform.currentBudgetUsage(yext.page.Load.getData()['September 2012']) ); 
+		
+		selectMonth: function(monthString) {
+			$('#budget-usage').empty(); 
+			$('#allocations').empty(); 
+			$('#spendingtrends').empty(); 
+			$('#categorybalancetrends').empty(); 
+			$('#runningbalance').empty(); 
+			$('#graph').empty(); 
 			
-			new yext.graph.PieChart('allocations').plot(yext.transforms.GraphTransform.allocationPercentage(yext.page.Load.getData()['September 2012']), 'Allocations to each master category');  
+			var data = yext.transforms.GraphTransform.spendingAsPercentageOfIncomeMasterCategories(yext.page.Load.getData()[monthString].masterCategories,yext.page.Load.getData()[monthString].income	);
+			var budgetUsage = new yext.graph.BudgetUsageGraph( $('#budget-usage')).plot( yext.transforms.GraphTransform.currentBudgetUsage(yext.page.Load.getData()[monthString]) ); 
+			
+			new yext.graph.PieChart('allocations').plot(yext.transforms.GraphTransform.allocationPercentage(yext.page.Load.getData()[monthString]), 'Allocations to each master category');  
 			var spendingData =  yext.transforms.GraphTransform.spendingTrendGraph(yext.page.Load.getData(), '05', '9', '2012', '2012');
 			new yext.graph.LineChart('spendingtrends').plot(spendingData.data, spendingData.labels, 'Spending over time for top 5 master categories'); 
 			
@@ -65,16 +67,32 @@ $(document).ready(function() {
 			new yext.graph.LineChart('runningbalance').plot(totalSpendingData.data, totalSpendingData.labels, 'Cumulative spending each month for top 5 master categories');
 			
 			new yext.graph.PieChart('graph').plot(data, 'Outflows as a percentage of total income'); 
-	          
-	          $("#graph").bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, data) {
+		}
+	}
+})(); 
+
+$(document).ready(function() {
+	$('#load').click(function() {
+		yext.page.Load.loadBudgetFile( $('#import')[0], function() {
+			yext.page.Load.loadRegisterFile( $('#import-register')[0], function() {
+	           $("#graph").bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, data) {
 	              $('#tooltip').show(); 
 	              $('#tooltip').text(data[0] + ' : $' + data[1].toFixed(2)); 
 	              $('#tooltip').offset({ left: ev.pageX, top: ev.pageY}); 
-	          }); 
+	           }); 
 		
 			   $("#graph").bind('jqplotDataUnhighlight', function(ev, seriesIndex, pointIndex, data) {
 				   $('#tooltip').hide(); 
 			   });
+			   
+			   var $select = $('select[name=month]'); 
+			   $.each(yext.page.Load.getData(), function(key, value) {
+				   $select.append($('<option></option>', { value: key}).text(key)); 
+			   }); 
+			   
+			   $select.change(function() {
+				   yext.page.Load.selectMonth($(this).val()); 
+			   }); 
 		}); 
 	}); 
 }); 
