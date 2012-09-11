@@ -1,0 +1,5 @@
+.pie-chart-tooltip {
+	display:none; 
+	position:absolute;
+	background-color:#ff8888; 
+}

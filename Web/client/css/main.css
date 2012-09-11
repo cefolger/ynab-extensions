@@ -1,0 +1,9 @@
+#budget-usage {
+	width: 900px; 
+}
+
+.ui-progressbar-value {
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 18px;
+}

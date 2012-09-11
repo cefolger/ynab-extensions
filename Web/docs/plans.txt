@@ -1,0 +1,12 @@
+ *** phase 1 : enhanced reporting ***
+category balances (contribution to category balance as a % of income/spending)
+
+multiple months possible
+*** phase 2 : general enhancements ***
+budget prediction?
+
+
+
+
+
+	

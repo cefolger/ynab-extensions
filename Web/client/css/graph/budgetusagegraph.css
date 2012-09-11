@@ -1,0 +1,30 @@
+.budget-progress-item span {
+	float: left; 
+	width: 160px;
+}
+
+.budget-progress-item .budget-progress-div {
+	 height: 20px; 
+}
+
+
+.budget-usage-container {
+	width: 100%; 
+}
+
+.budget-progress-item .budget-progress-value {
+	width: auto; 
+	float: right; 
+}
+
+.sub-budget {
+	float: right; 
+	width: 40%;
+	border: 1px solid #ff8888; 
+	border-left-width: 15px; 
+}
+
+.highlighted-item {
+	background:none !important; 
+	background-color: #ff8888 !important; 	
+}
