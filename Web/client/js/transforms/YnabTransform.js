@@ -21,7 +21,7 @@ yext.transforms.YnabTransform = (function() {
 				var dateEntry = months[actualDate.getMonth()] + ' ' + actualDate.getFullYear(); 
 
 				var entry = results[dateEntry] || { income: 0 }; 
-				results[dateEntry] = entry; 
+				results[dateEntry] = entry;
 				results[dateEntry].month = actualDate.getMonth() + 1; 
 				results[dateEntry].year = actualDate.getFullYear(); 
 				
@@ -32,6 +32,38 @@ yext.transforms.YnabTransform = (function() {
 			}); 
 			
 			return results; 
+		},
+		
+		dateBounds: function(monthlyBudgets) {
+			var min = [12, 3000];
+			var max = [0, 0]; 
+			
+			$.each(monthlyBudgets, function(key, value) {
+				if(value.year < min[1]) {
+					min[0] = value.month; 
+					min[1] = value.year; 
+				}
+				else if (value.year === min[1]) {
+					if(value.month < min[0]) {
+						min[0] = value.month;
+						min[1] = value.year; 
+					}
+				}
+				
+				if(value.year > max[1]) {
+					max[0] = value.month; 
+					max[1] = value.year; 
+				}
+				else if (value.year === max[1]) {
+					if(value.month > max[0]) {
+						max[0] = value.month; 
+						max[1] = value.year; 
+					}
+				}
+			}); 
+			
+			console.log([min, max]); 
+			return [min, max]; 
 		},
 		
 		transactionsByCategory: function( linePerTransactionArray) {
