@@ -1,4 +1,4 @@
-yext.transforms.YnabTransform = (function() {
+yext.transforms.YnabTransform = ((() => {
 	var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; 
 	
 	return {
@@ -6,10 +6,10 @@ yext.transforms.YnabTransform = (function() {
 		 *  input: array of lines in CVS format representing transactions 
 		 *  output: object map containing month : income pairs
 		 */
-		monthlyIncomes: function( linePerTransactionArray) {
+		monthlyIncomes(linePerTransactionArray) {
 			var results = {}; 
 			
-			$.each(linePerTransactionArray, function(index, line) {
+			$.each(linePerTransactionArray, (index, line) => {
 				line = line.replace(/"/g, ''); 
 				
 				if(index === 0) return; // ignore column header 
@@ -34,11 +34,11 @@ yext.transforms.YnabTransform = (function() {
 			return results; 
 		},
 		
-		dateBounds: function(monthlyBudgets) {
+		dateBounds(monthlyBudgets) {
 			var min = [12, 3000];
 			var max = [0, 0]; 
 			
-			$.each(monthlyBudgets, function(key, value) {
+			$.each(monthlyBudgets, (key, value) => {
 				if(value.year < min[1]) {
 					min[0] = value.month; 
 					min[1] = value.year; 
@@ -66,10 +66,10 @@ yext.transforms.YnabTransform = (function() {
 			return [min, max]; 
 		},
 		
-		transactionsByCategory: function( linePerTransactionArray) {
+		transactionsByCategory(linePerTransactionArray) {
 			var results = {}; 
 			
-			$.each(linePerTransactionArray, function(index, line) {
+			$.each(linePerTransactionArray, (index, line) => {
 				line = line.replace(/"/g, ''); 
 				
 				if(index === 0) return; // ignore column header 
@@ -90,10 +90,10 @@ yext.transforms.YnabTransform = (function() {
 			return results; 
 		},
 		
-		transactionsByLocation: function(linePerTransactionArray) {
+		transactionsByLocation(linePerTransactionArray) {
 			var results = {}; 
 			
-			$.each(linePerTransactionArray, function(index, line) {
+			$.each(linePerTransactionArray, (index, line) => {
 				line = line.replace(/"/g, ''); 
 				
 				if(index === 0) return; // ignore column header 
@@ -120,10 +120,10 @@ yext.transforms.YnabTransform = (function() {
 		 * input: monthlyBudgets: object containing budgets by month
 		 * output: objects containing budgets and incomes for each month
 		 */
-		budgetsWithIncomesAndExpenses : function(monthlyIncomes, monthlyBudgets) {
+		budgetsWithIncomesAndExpenses(monthlyIncomes, monthlyBudgets) {
 			var results = jQuery.extend(true, {}, monthlyBudgets); // deep copy  
 			
-			$.each(Object.keys(monthlyBudgets), function(index, month) {
+			$.each(Object.keys(monthlyBudgets), (index, month) => {
 				if(monthlyIncomes[month]) {
 					results[month].income = monthlyIncomes[month].income;
 					results[month].month = monthlyIncomes[month].month;
@@ -141,11 +141,11 @@ yext.transforms.YnabTransform = (function() {
 		 * input: object containing all master categories (with subcategories)
 		 * output: object with each subcategory containing its current category balance, and it's category balance contribution for the month
 		 */
-		categoriesWithCategoryBalances : function(budgets) {
+		categoriesWithCategoryBalances(budgets) {
 			var results = jQuery.extend(true, {}, budgets); // deep copy  
 			
-			var addBalanceToCategory = function(masterCategory) {
-				$.each(Object.keys(masterCategory), function(index, subcategoryName) {
+			var addBalanceToCategory = masterCategory => {
+				$.each(Object.keys(masterCategory), (index, subcategoryName) => {
 					var category = masterCategory[subcategoryName]; 
 					var inflow = parseInt(category.inflow.replace('$', '')); 
 					var outflow = parseInt(category.outflow.replace('$', '')); 
@@ -155,23 +155,23 @@ yext.transforms.YnabTransform = (function() {
 				}); 
 			}; 
 			
-			var addBalanceToBudget = function(budget) {
-				$.each(Object.keys(budget.masterCategories), function(index, masterCategory) {
+			var addBalanceToBudget = budget => {
+				$.each(Object.keys(budget.masterCategories), (index, masterCategory) => {
 					addBalanceToCategory( budget.masterCategories[masterCategory]); 
 				}); 
 			}; 
 			
-			$.each(Object.keys(results), function(index, monthlyBudget) {
+			$.each(Object.keys(results), (index, monthlyBudget) => {
 				addBalanceToBudget(results[monthlyBudget]); 
 			}); 
 			
 			return results; 
 		}, 
 		
-		monthlyBudgets : function(linePerMonthPerCategoryArray) {
+		monthlyBudgets(linePerMonthPerCategoryArray) {
 			 var results = {}; 
 			
-			$.each(linePerMonthPerCategoryArray, function(index, entry) {
+			$.each(linePerMonthPerCategoryArray, (index, entry) => {
 				if(index <= 1) return; // continue 
 				
 				entry = entry.replace(/"/g, ''); 
@@ -190,16 +190,16 @@ yext.transforms.YnabTransform = (function() {
 			return results; 
 		},
 		
-		masterCategories : function(monthlyBudgets) {
+		masterCategories(monthlyBudgets) {
 			var results = jQuery.extend(true, {}, monthlyBudgets); // deep copy  
 			
-			$.each(Object.keys(results), function(index, budget) {
+			$.each(Object.keys(results), (index, budget) => {
 				// for each monthly budget 
 				var entry = results[budget];
 				entry.masterCategories = {}; 
 				
 				// for each entry 
-				$.each(entry.rows, function(index, value) {
+				$.each(entry.rows, (index, value) => {
 					var wholeCategory = value[0]; 
 					// get master category
 					var master = wholeCategory.substring(0, wholeCategory.indexOf(':')); 
@@ -215,12 +215,12 @@ yext.transforms.YnabTransform = (function() {
 			return results; 
 		},
 
-		subCategories : function (budgetsWithMasterCategories) {
+		subCategories(budgetsWithMasterCategories) {
 			var results = jQuery.extend(true, {}, budgetsWithMasterCategories); // deep copy  
 			
-			$.each(Object.keys(results), function(index, budget) {
-				$.each (Object.keys( results[budget].masterCategories ), function(index, masterCategory) {
-					$.each( results[budget].masterCategories[masterCategory].rows, function(index, subcategory) {
+			$.each(Object.keys(results), (index, budget) => {
+				$.each (Object.keys( results[budget].masterCategories ), (index, masterCategory) => {
+					$.each( results[budget].masterCategories[masterCategory].rows, (index, subcategory) => {
 						var newSubcategory = {
 								inflow: subcategory[1],
 								outflow: subcategory[2], 
@@ -239,4 +239,4 @@ yext.transforms.YnabTransform = (function() {
 		
 		
 	}; 
-})(); 
+}))(); 

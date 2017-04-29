@@ -5,11 +5,11 @@ yext.graph.BudgetUsageGraph = function(graphTarget) {
 	/*	 
 	 * input: object containing master categories and subcategories  
 	 */
-	this.plot = function(masterCategories) {
+	this.plot = masterCategories => {
 		var mainDiv = $('<div class="budget-usage-container"></div>').appendTo(target);
 		var inProgress = false; 
 		
-		$.each(Object.keys(masterCategories), function(index, category) {
+		$.each(Object.keys(masterCategories), (index, category) => {
 			var item = $('<div class="budget-progress-item"></div>').appendTo(mainDiv);
 			var clickableSpan =$('<span class="budget-link">' + category + ': </span>');  
 			item.append ( clickableSpan);
@@ -28,7 +28,7 @@ yext.graph.BudgetUsageGraph = function(graphTarget) {
 				$('.sub-budget').remove(); 
 				
 				inProgress = true; 
-				mainDiv.animate({width: '58%'}, function() {
+				mainDiv.animate({width: '58%'}, () => {
 					that.subplot(masterCategories[category]);
 					inProgress = false; 
 				}); 
@@ -41,10 +41,10 @@ yext.graph.BudgetUsageGraph = function(graphTarget) {
 		}); 
 	}; 
 	
-	this.subplot = function(masterCategory) {
+	this.subplot = masterCategory => {
 		var mainDiv = $('<div class="budget-usage-container sub-budget"></div>').insertBefore(target.find('.budget-usage-container')).hide();
 		
-		$.each(Object.keys(masterCategory), function(index, category) {
+		$.each(Object.keys(masterCategory), (index, category) => {
 			if(category === 'total' || category === 'used' || category === 'percentage') { 
 				return; // continue
 			}

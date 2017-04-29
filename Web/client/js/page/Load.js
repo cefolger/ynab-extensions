@@ -1,9 +1,9 @@
-yext.page.Load = (function() {
+yext.page.Load = ((() => {
 	var storedData = {}; 
 	var transactionsByCategory; 
 	var dateBounds; 
 	
-	var splitFile = function(data) {
+	var splitFile = data => {
 		// split file into array of lines
 		lines = data.split('\n');
 		
@@ -13,7 +13,7 @@ yext.page.Load = (function() {
 		storedData = budgetsWithSubCategories; 
 	}; 
 	
-	var splitBudgetFile = function(data) {
+	var splitBudgetFile = data => {
 		lines = data.split('\n'); 
 		transactionsByCategory = yext.transforms.YnabTransform.transactionsByCategory(lines);
 		yext.transforms.YnabTransform.transactionsByLocation(lines); 
@@ -23,22 +23,22 @@ yext.page.Load = (function() {
 		storedData = yext.transforms.YnabTransform.categoriesWithCategoryBalances(storedData);
 	}; 
 	
-	var generateStatTable = function($statRoot, $statUl, data, id) {
+	var generateStatTable = ($statRoot, $statUl, data, id) => {
 		var $tpcStats = $('<div></div>').appendTo($statRoot);
 		$tpcStats.attr('id', id); 
 		$('<li><a href="#tpc">Transactions per category</a></li>').appendTo($statUl);
 		var $tpcTable = $('<table><thead><tr><th>Name</th><th>Count</th></tr></thead><tbody></tbody>').appendTo($tpcStats);  
-		$.each(data, function(key, value) {
+		$.each(data, (key, value) => {
 			var $tr = $('<tr></tr>').appendTo($tpcTable);
 			$tr.append( $('<td>' + value.name + '</td><td>' + value.value + '</td>')); 
 		}); 
 	}; 
 	
 	return {
-		loadBudgetFile: function(fileInputObject, callback) {
+		loadBudgetFile(fileInputObject, callback) {
 			var file = fileInputObject.files[0]; 
 			var reader = new FileReader(); 
-			reader.onload = function() {
+			reader.onload = () => {
 				splitFile(reader.result); 
 				callback(); 
 			}; 
@@ -46,10 +46,10 @@ yext.page.Load = (function() {
 			reader.readAsText(file); 
 		}, 
 		
-		loadRegisterFile: function(fileInputObject, callback) {
+		loadRegisterFile(fileInputObject, callback) {
 			var file = fileInputObject.files[0]; 
 			var reader = new FileReader(); 
-			reader.onload = function() {
+			reader.onload = () => {
 				splitBudgetFile(reader.result); 
 				callback(); 
 			}; 
@@ -57,15 +57,15 @@ yext.page.Load = (function() {
 			reader.readAsText(file); 
 		},
 		
-		getDateBounds: function() {
+		getDateBounds() {
 			return dateBounds; 
 		},
 		
-		getData: function() {
+		getData() {
 			return storedData; 
 		},
 		
-		selectMonth: function(monthString) {
+		selectMonth(monthString) {
 			$('#budget-usage').empty(); 
 			$('#allocations').empty(); 
 			$('#spendingtrends').empty(); 
@@ -97,20 +97,20 @@ yext.page.Load = (function() {
 			
 			$statRoot.tabs(); 
 		}
-	}
-})(); 
+	};
+}))(); 
 
-$(document).ready(function() {
-	$('#load').click(function() {
-		yext.page.Load.loadBudgetFile( $('#import')[0], function() {
-			yext.page.Load.loadRegisterFile( $('#import-register')[0], function() {
-	           $("#graph").bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, data) {
+$(document).ready(() => {
+	$('#load').click(() => {
+		yext.page.Load.loadBudgetFile( $('#import')[0], () => {
+			yext.page.Load.loadRegisterFile( $('#import-register')[0], () => {
+	           $("#graph").bind('jqplotDataHighlight', (ev, seriesIndex, pointIndex, data) => {
 	              $('#tooltip').show(); 
 	              $('#tooltip').text(data[0] + ' : $' + data[1].toFixed(2)); 
 	              $('#tooltip').offset({ left: ev.pageX, top: ev.pageY}); 
 	           }); 
 		
-			   $("#graph").bind('jqplotDataUnhighlight', function(ev, seriesIndex, pointIndex, data) {
+			   $("#graph").bind('jqplotDataUnhighlight', (ev, seriesIndex, pointIndex, data) => {
 				   $('#tooltip').hide(); 
 			   });
 
@@ -124,7 +124,7 @@ $(document).ready(function() {
 				   $('#tabs').tabs(); 
 			   }); 
 			   
-			   $.each(yext.page.Load.getData(), function(key, value) {
+			   $.each(yext.page.Load.getData(), (key, value) => {
 				   $select.append($('<option></option>', { value: key}).text(key));
 				   
 				   $select[0].selectedIndex = 1;
