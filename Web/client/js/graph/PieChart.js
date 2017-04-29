@@ -1,11 +1,11 @@
 yext.graph.PieChart = function(graphTargetObjectId) {
 	var target = graphTargetObjectId; 
 	
-	this.plot = function(data, title) {
+	this.plot = (data, title) => {
 
         var plot1 = jQuery.jqplot (target, [data], 
         { 
-      	  title: title,
+      	  title,
             seriesDefaults: {
               // Make this a pie chart.
               renderer: jQuery.jqplot.PieRenderer, 
@@ -23,13 +23,13 @@ yext.graph.PieChart = function(graphTargetObjectId) {
         var targetObject = $('#' + target);
         var tooltip = $('<div class="pie-chart-tooltip"></div>').appendTo($('body')); 
         
-        targetObject.bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, data) {
+        targetObject.bind('jqplotDataHighlight', (ev, seriesIndex, pointIndex, data) => {
         	tooltip.show(); 
         	tooltip.text(data[0] + ' : $' + data[1].toFixed(2)); 
         	tooltip.offset({ left: ev.pageX, top: ev.pageY}); 
         }); 
 	
-        targetObject.bind('jqplotDataUnhighlight', function(ev, seriesIndex, pointIndex, data) {
+        targetObject.bind('jqplotDataUnhighlight', (ev, seriesIndex, pointIndex, data) => {
         	tooltip.hide(); 
 	   });
 	}; 

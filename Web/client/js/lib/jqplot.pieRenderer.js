@@ -27,7 +27,7 @@
  *     "This code is unrestricted: you are free to use it however you like."
  * 
  */
-(function($) {
+(($ => {
     /**
      * Class: $.jqplot.PieRenderer
      * Plugin renderer to draw a pie chart.
@@ -391,7 +391,7 @@
                     break;
             }
         }
-        
+
         var shadow = (opts.shadow != undefined) ? opts.shadow : this.shadow;
         var fill = (opts.fill != undefined) ? opts.fill : this.fill;
         var cw = ctx.canvas.width;
@@ -400,7 +400,7 @@
         var h = ch - offy - 2 * this.padding;
         var mindim = Math.min(w,h);
         var d = mindim;
-        
+
         // Fixes issue #272.  Thanks hugwijst!
         // reset slice angles array.
         this._sliceAngles = [];
@@ -409,11 +409,14 @@
         if (this.fill == false) {
             sm += this.lineWidth;
         }
-        
+
         var rprime;
         var maxrprime = 0;
 
-        var ang, ang1, ang2, shadowColor;
+        var ang;
+        var ang1;
+        var ang2;
+        var shadowColor;
         var sa = this.startAngle / 180 * Math.PI;
 
         // have to pre-draw shadows, so loop throgh here and calculate some values also.
@@ -454,14 +457,16 @@
                 this.renderer.drawSlice.call (this, ctx, this._sliceAngles[i][0], this._sliceAngles[i][1], shadowColor, true);
             }
         }
-        
+
         for (var i=0; i<gd.length; i++) {
                       
             this.renderer.drawSlice.call (this, ctx, this._sliceAngles[i][0], this._sliceAngles[i][1], colorGenerator.next(), false);
         
             if (this.showDataLabels && gd[i][2]*100 >= this.dataLabelThreshold) {
-                var fstr, avgang = (this._sliceAngles[i][0] + this._sliceAngles[i][1])/2, label;
-            
+                var fstr;
+                var avgang = (this._sliceAngles[i][0] + this._sliceAngles[i][1])/2;
+                var label;
+
                 if (this.dataLabels == 'label') {
                     fstr = this.dataLabelFormatString || '%s';
                     label = $.jqplot.sprintf(fstr, gd[i][0]);
@@ -478,12 +483,12 @@
                     fstr = this.dataLabelFormatString || '%s';
                     label = $.jqplot.sprintf(fstr, this.dataLabels[i]);
                 }
-            
+
                 var fact = (this._radius ) * this.dataLabelPositionFactor + this.sliceMargin + this.dataLabelNudge;
-            
+
                 var x = this._center[0] + Math.cos(avgang) * fact + this.canvas._offsets.left;
                 var y = this._center[1] + Math.sin(avgang) * fact + this.canvas._offsets.top;
-            
+
                 var labelelem = $('<div class="jqplot-pie-series jqplot-data-label" style="position:absolute;">' + label + '</div>').insertBefore(plot.eventCanvas._elem);
                 if (this.dataLabelCenterOn) {
                     x -= labelelem.width()/2;
@@ -497,7 +502,7 @@
                 y = Math.round(y);
                 labelelem.css({left: x, top: y});
             }
-        }            
+        }
     };
     
     $.jqplot.PieAxisRenderer = function() {
@@ -599,14 +604,15 @@
 
             // Pie charts legends don't go by number of series, but by number of data points
             // in the series.  Refactor things here for that.
-            
-            var pad = false, 
-                reverse = false,
-                nr, 
-                nc;
+
+            var pad = false;
+
+            var reverse = false;
+            var nr;
+            var nc;
             var s = series[0];
             var colorGenerator = new $.jqplot.ColorGenerator(s.seriesColors);
-            
+
             if (s.show) {
                 var pd = s.data;
                 if (this.numberRows) {
@@ -626,13 +632,19 @@
                     nr = pd.length;
                     nc = 1;
                 }
-                
-                var i, j;
-                var tr, td1, td2; 
-                var lt, rs, color;
-                var idx = 0; 
-                var div0, div1;   
-                
+
+                var i;
+                var j;
+                var tr;
+                var td1;
+                var td2;
+                var lt;
+                var rs;
+                var color;
+                var idx = 0;
+                var div0;
+                var div1;
+
                 for (i=0; i<nr; i++) {
                     tr = $(document.createElement('tr'));
                     tr.addClass('jqplot-table-legend');
@@ -708,7 +720,7 @@
         return this._elem;                
     };
     
-    $.jqplot.PieRenderer.prototype.handleMove = function(ev, gridpos, datapos, neighbor, plot) {
+    $.jqplot.PieRenderer.prototype.handleMove = (ev, gridpos, datapos, neighbor, plot) => {
         if (neighbor) {
             var ins = [neighbor.seriesIndex, neighbor.pointIndex, neighbor.data];
             plot.target.trigger('jqplotDataMouseOver', ins);
@@ -882,7 +894,7 @@
         }
         
         var hctx = this.plugins.pieRenderer.highlightCanvas.setContext();
-        this.eventCanvas._elem.bind('mouseleave', {plot:this}, function (ev) { unhighlight(ev.data.plot); });
+        this.eventCanvas._elem.bind('mouseleave', {plot:this}, ev => { unhighlight(ev.data.plot); });
     }
     
     $.jqplot.preInitHooks.push(preInit);
@@ -894,6 +906,6 @@
     $.jqplot.PieTickRenderer.prototype = new $.jqplot.AxisTickRenderer();
     $.jqplot.PieTickRenderer.prototype.constructor = $.jqplot.PieTickRenderer;
     
-})(jQuery);
+}))(jQuery);
     
     
